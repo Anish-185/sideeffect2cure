@@ -17,9 +17,9 @@ sideeffect2cure/
 │   ├── app/
 │   │   ├── api/             FastAPI routers
 │   │   ├── core/            config, disclaimers
-│   │   ├── models/          Pydantic schemas (disease L2, drug L3, candidate L4)
+│   │   ├── models/          schemas (disease L2, drug L3, candidate L4, feature L5)
 │   │   ├── services/        business logic; disease/ (L2) drug/ (L3)
-│   │   │                    candidates/ (L4)
+│   │   │                    candidates/ (L4) features/ (L5)
 │   │   ├── data/            biomedical data foundation (Level 1): sources,
 │   │   │                    schemas, identifier normalization, ingestion
 │   │   ├── features/        feature engineering
@@ -37,6 +37,7 @@ sideeffect2cure/
 ├── docs/disease-intelligence.md    Level 2 resolver + disease profile
 ├── docs/drug-intelligence.md       Level 3 resolver + drug profile
 ├── docs/candidate-generation.md    Level 4 candidate drug generation
+├── docs/feature-engineering.md     Level 5 disease-drug feature vectors
 └── README.md
 ```
 
@@ -115,13 +116,28 @@ res.counts_by_method           # {'gene_target': 19, 'pathway': 131, 'both': 18,
 
 Details: **`docs/candidate-generation.md`**.
 
+## Feature engineering (Level 5)
+
+Turns each `(CandidateDrug, DiseaseProfile, DrugProfile)` into a deterministic
+`FeatureVector` — counts, documented ratios (null on zero denominator), and
+source-availability flags. No score, probability, ranking, ML, or fusion.
+
+```python
+from app.services.features import build_feature_vectors
+vectors = build_feature_vectors(disease_profile, candidates)   # one per candidate
+vectors[0].to_feature_dict()   # flat {name: number|bool|None} for Level 6
+```
+
+Details: **`docs/feature-engineering.md`**.
+
 ## Status
 
 - **Level 0** — repository foundation.
 - **Level 1** — biomedical data foundation.
 - **Level 2** — disease intelligence.
 - **Level 3** — drug intelligence.
-- **Level 4** — candidate drug generation (this milestone).
+- **Level 4** — candidate drug generation.
+- **Level 5** — feature engineering (this milestone).
 
 See `docs/architecture.md` for the full pipeline and per-level status.
 

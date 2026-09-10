@@ -3,6 +3,7 @@
 Level 2 — disease intelligence — is in :mod:`app.models.disease`.
 Level 3 — drug intelligence — is in :mod:`app.models.drug`.
 Level 4 — candidate drug generation — is in :mod:`app.models.candidate`.
+Level 5 — feature engineering — is in :mod:`app.models.feature`.
 """
 
 from app.models.candidate import (
@@ -38,8 +39,14 @@ from app.models.drug import (
     PathwayContext,
     SideEffect,
 )
+from app.models.feature import (
+    FEATURE_SCHEMA_VERSION,
+    FeatureVector,
+    FeatureVectorMetadata,
+)
 
 __all__ = [
+    "FEATURE_SCHEMA_VERSION",
     "CandidateDrug",
     "CandidateGenerationProvenance",
     "CandidateGenerationReason",
@@ -55,6 +62,8 @@ __all__ = [
     "DrugResolutionResult",
     "DrugResolutionStatus",
     "DrugTargetAssociation",
+    "FeatureVector",
+    "FeatureVectorMetadata",
     "GeneAssociation",
     "GeneTargetMatch",
     "GenerationMethod",

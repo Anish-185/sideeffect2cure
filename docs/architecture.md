@@ -74,4 +74,12 @@ relationships.
   relationship(s) that generated it — **no score, rank or probability**.
   Business logic in `app.services.candidates`, schemas in
   `app.models.candidate`.
-- Level 5+ : defined by upcoming instructions.
+- **Level 5 (done):** feature engineering — see
+  [`feature-engineering.md`](feature-engineering.md). Turns each
+  (`CandidateDrug`, `DiseaseProfile`, `DrugProfile`) into a deterministic
+  `FeatureVector` — counts, documented ratios (null on zero denominator), and
+  source-availability flags across generation / gene-target overlap / pathway
+  overlap / side-effect / target-action / drug-structural groups. **No score,
+  probability, rank, ML or fusion.** Business logic in
+  `app.services.features`, schemas in `app.models.feature`.
+- Level 6+ : defined by upcoming instructions.

@@ -275,3 +275,23 @@ def real_candidate_index():
     if not idx.gene_target_available and not idx.pathway_available:
         pytest.skip("neither HGNC nor Reactome enrichment available in this environment")
     return idx
+
+
+# --- Level 5 (feature engineering) fixtures -------------------------
+@pytest.fixture
+def feature_inputs(candidate_disease_profile, candidate_fixture_index, drug_fixture_repo):
+    """(candidate, disease_profile, drug_profile, index) for fixture drug DRUG:001."""
+    from app.services.candidates import generate_candidates
+    from app.services.drug import get_drug_profile
+
+    res = generate_candidates(candidate_disease_profile, index=candidate_fixture_index)
+    candidate = next(c for c in res.candidates if c.drug_id == "DRUG:001")
+    drug_profile = get_drug_profile(
+        "DRUG:001", repository=drug_fixture_repo, enrich_pathways=False
+    )
+    return {
+        "candidate": candidate,
+        "disease_profile": candidate_disease_profile,
+        "drug_profile": drug_profile,
+        "index": candidate_fixture_index,
+    }
