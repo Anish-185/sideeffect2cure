@@ -1,0 +1,66 @@
+# Disease ontology-id seed list for SideEffect2Cure AI (Level 1).
+#
+# This file is an INPUT PARAMETER, not data: it lists which diseases the
+# prototype ingests. Disease names and every disease-gene association are
+# fetched from the Open Targets Platform at ingest time (nothing here is a
+# biomedical claim). Edit this list to widen or narrow disease scope.
+#
+# Format: one ontology id per line (EFO_* / MONDO_*). Text after '#' and blank
+# lines are ignored. Ids that no longer resolve in Open Targets are reported
+# and skipped, never faked.
+#
+# ontology_id        # note (informational only)
+
+MONDO_0018177        # glioblastoma  (flagship demonstration target)
+
+# --- solid tumours ---
+MONDO_0007254        # breast cancer
+MONDO_0008903        # lung cancer
+MONDO_0008433        # small cell lung carcinoma
+MONDO_0005097        # squamous cell lung carcinoma
+MONDO_0005575        # colorectal cancer
+MONDO_0005105        # melanoma
+MONDO_0002367        # kidney cancer
+MONDO_0002691        # liver cancer
+MONDO_0007256        # hepatocellular carcinoma
+MONDO_0021040        # pancreatic neoplasm
+MONDO_0002715        # uterine cancer
+MONDO_0011719        # gastrointestinal stromal tumor
+
+# --- haematological malignancies ---
+MONDO_0018874        # acute myeloid leukemia
+MONDO_0018905        # diffuse large B-cell lymphoma
+
+# --- neurodegeneration / neurology ---
+MONDO_0004975        # Alzheimer disease
+MONDO_0005180        # Parkinson disease
+MONDO_0004976        # amyotrophic lateral sclerosis
+MONDO_0005301        # multiple sclerosis
+
+# --- psychiatry ---
+MONDO_0005090        # schizophrenia
+MONDO_0004985        # bipolar disorder
+MONDO_0002009        # major depressive disorder
+
+# --- metabolic / cardiovascular ---
+MONDO_0005147        # type 1 diabetes mellitus
+MONDO_0005148        # type 2 diabetes mellitus
+MONDO_0011122        # obesity disorder
+MONDO_0007750        # familial hypercholesterolemia
+MONDO_0005393        # gout
+MONDO_0005010        # coronary artery disorder
+MONDO_0005044        # hypertensive disorder
+
+# --- immune / inflammatory ---
+MONDO_0004979        # asthma
+MONDO_0005265        # inflammatory bowel disease
+MONDO_0005011        # Crohn disease
+MONDO_0007915        # systemic lupus erythematosus
+
+# --- other ---
+MONDO_0005300        # chronic kidney disease
+MONDO_0009061        # cystic fibrosis
+MONDO_0018150        # Gaucher disease
+MONDO_0018076        # tuberculosis
+MONDO_0005812        # influenza
+MONDO_0100096        # COVID-19

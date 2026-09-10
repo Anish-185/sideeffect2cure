@@ -35,6 +35,12 @@ class Settings(BaseSettings):
     raw_dir: Path = DATA_DIR / "raw"
     processed_dir: Path = DATA_DIR / "processed"
     features_dir: Path = DATA_DIR / "features"
+    mappings_dir: Path = DATA_DIR / "mappings"
+
+    # Network etiquette for the ingestion layer (see app.data.sources).
+    http_timeout_seconds: float = 60.0
+    http_retries: int = 3
+    http_user_agent: str = "SideEffect2Cure-AI/prototype (research; contact via repo)"
 
     cors_origins: list[str] = ["http://localhost:5173", "http://localhost:3000"]
 

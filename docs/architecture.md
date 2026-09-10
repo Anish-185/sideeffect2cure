@@ -45,4 +45,10 @@ relationships.
 
 - **Level 0 (done):** repository foundation, module skeleton, FastAPI app with
   `/api/health` and `/api/meta`, test harness.
-- Level 1+ : defined by upcoming instructions.
+- **Level 1 (done):** biomedical data foundation — see [`data.md`](data.md).
+  Six normalized processed tables (`drugs`, `diseases`, `drug_targets`,
+  `drug_side_effects`, `disease_genes`, `disease_pathways`) + identifier
+  crosswalk, built from SIDER / ChEMBL / Open Targets / Reactome by a
+  reproducible ingestion pipeline (`app.data.ingest`) with cross-table quality
+  checks (`app.data.quality`).
+- Level 2+ : defined by upcoming instructions.
