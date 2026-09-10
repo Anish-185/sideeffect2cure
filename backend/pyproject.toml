@@ -1,6 +1,9 @@
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+markers = [
+    "slow: test touches a large local file or the network (Reactome enrichment)",
+]
 
 [tool.ruff]
 line-length = 100

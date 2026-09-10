@@ -57,4 +57,12 @@ relationships.
   `DiseaseProfile` (genes + pathways + provenance + deterministic summary),
   built from the Level 1 datasets. Business logic in `app.services.disease`,
   schemas in `app.models.disease`.
-- Level 3+ : defined by upcoming instructions.
+- **Level 3 (done):** drug intelligence — see
+  [`drug-intelligence.md`](drug-intelligence.md). `DrugResolver`
+  (query → supported drug; `AMBIGUOUS` for SIDER salt-name collisions) and the
+  canonical `DrugProfile` (identity + side effects + targets + mechanisms +
+  optional Reactome pathway context + provenance). Business logic in
+  `app.services.drug`, schemas in `app.models.drug`. Optional sources chosen by
+  usefulness: Reactome integrated; PubChem/UniProt reused from Level 1;
+  Open Targets skipped.
+- Level 4+ : defined by upcoming instructions.

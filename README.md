@@ -17,9 +17,9 @@ sideeffect2cure/
 │   ├── app/
 │   │   ├── api/             FastAPI routers
 │   │   ├── core/            config, disclaimers
-│   │   ├── models/          Pydantic schemas (disease.py — Level 2)
-│   │   ├── services/        business logic; services/disease/ — Level 2
-│   │   │                    resolver + profile builder
+│   │   ├── models/          Pydantic schemas (disease.py L2, drug.py L3)
+│   │   ├── services/        business logic; disease/ (L2) + drug/ (L3)
+│   │   │                    resolvers + profile builders
 │   │   ├── data/            biomedical data foundation (Level 1): sources,
 │   │   │                    schemas, identifier normalization, ingestion
 │   │   ├── features/        feature engineering
@@ -35,6 +35,7 @@ sideeffect2cure/
 ├── docs/architecture.md            canonical pipeline + level status
 ├── docs/data.md                    Level 1 data foundation (sources, schemas, licensing)
 ├── docs/disease-intelligence.md    Level 2 resolver + disease profile
+├── docs/drug-intelligence.md       Level 3 resolver + drug profile
 └── README.md
 ```
 
@@ -80,11 +81,28 @@ p = build_disease_profile("Glioblastoma")   # or "GBM", "MONDO_0018177"
 
 Details: **`docs/disease-intelligence.md`**.
 
+## Drug intelligence (Level 3)
+
+Resolves a drug name / internal id / ChEMBL id / PubChem CID to a canonical
+`DrugProfile` (side effects + targets + mechanisms + optional Reactome pathway
+context + provenance). SIDER salt-name collisions return `AMBIGUOUS`, never a
+guess.
+
+```python
+from app.services.drug import build_drug_profile
+p = build_drug_profile("Aspirin")            # or "CHEMBL25", "2244", "DRUG:000124"
+[(t.target_name, t.action_type) for t in p.targets]   # [('Cyclooxygenase', 'INHIBITOR')]
+```
+
+Optional sources are chosen by usefulness, not completeness — only Reactome was
+integrated. Details: **`docs/drug-intelligence.md`**.
+
 ## Status
 
 - **Level 0** — repository foundation.
 - **Level 1** — biomedical data foundation.
-- **Level 2** — disease intelligence (this milestone).
+- **Level 2** — disease intelligence.
+- **Level 3** — drug intelligence (this milestone).
 
 See `docs/architecture.md` for the full pipeline and per-level status.
 
