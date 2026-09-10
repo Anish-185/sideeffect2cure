@@ -59,10 +59,17 @@ from app.models.prediction import (
     PredictionResult,
     ValidationSummary,
 )
+from app.models.ranking import (
+    RANKING_VERSION,
+    RankedCandidate,
+    RankedCandidateResult,
+    RankingProvenance,
+)
 
 __all__ = [
     "FEATURE_SCHEMA_VERSION",
     "PREDICTION_SCHEMA_VERSION",
+    "RANKING_VERSION",
     "SCORING_VERSION",
     "CandidateDrug",
     "CandidateGenerationProvenance",
@@ -97,6 +104,9 @@ __all__ = [
     "PredictionModelMetadata",
     "PredictionResult",
     "ProfileProvenance",
+    "RankedCandidate",
+    "RankedCandidateResult",
+    "RankingProvenance",
     "ResolutionResult",
     "ResolutionStatus",
     "SideEffect",

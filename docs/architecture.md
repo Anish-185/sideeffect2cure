@@ -105,4 +105,12 @@ relationships.
   not scored. The score is an **internal research prioritization score**, not
   clinical efficacy — **no ranking here**. Business logic in
   `app.services.fusion`, schemas in `app.models.fusion`.
-- Phase 8+ : defined by upcoming instructions.
+- **Phase 8 (done):** candidate ranking — see
+  [`candidate-ranking.md`](candidate-ranking.md). **Pure ordering** of the
+  Phase 7 `EvidenceFusionResult`s: sort by `repurposing_score` descending,
+  tie-break by `drug_id` ascending, assign a unique 1-based `rank`. Optional
+  `top_n` presentation slice (never alters scores). Each `RankedCandidate`
+  **embeds the full `EvidenceFusionResult`** — no evidence lost. No score
+  recalculated, no biology touched, no new dependency. Business logic in
+  `app.services.ranking`, schemas in `app.models.ranking`.
+- Phase 9+ : defined by upcoming instructions.

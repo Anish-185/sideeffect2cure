@@ -8,6 +8,7 @@ Business logic lives here, kept out of the FastAPI route layer.
 - Level 5: :mod:`app.services.features` — disease-drug feature engineering.
 - Phase 6: :mod:`app.services.ml` — ML prediction + interpretability.
 - Phase 7: :mod:`app.services.fusion` — evidence fusion + repurposing score.
+- Phase 8: :mod:`app.services.ranking` — candidate ranking.
 """
 
 from app.services.candidates import (
@@ -33,6 +34,7 @@ from app.services.features import (
 )
 from app.services.fusion import fuse_all, fuse_evidence, fuse_for_disease
 from app.services.ml import predict, predict_for_disease
+from app.services.ranking import rank_candidates, rank_for_disease
 
 __all__ = [
     "DiseaseResolver",
@@ -51,6 +53,8 @@ __all__ = [
     "get_drug_profile",
     "predict",
     "predict_for_disease",
+    "rank_candidates",
+    "rank_for_disease",
     "resolve_disease",
     "resolve_drug",
 ]

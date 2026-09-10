@@ -18,9 +18,9 @@ sideeffect2cure/
 │   │   ├── api/             FastAPI routers
 │   │   ├── core/            config, disclaimers
 │   │   ├── models/          schemas (disease L2, drug L3, candidate L4,
-│   │   │                    feature L5, prediction P6, fusion P7)
+│   │   │                    feature L5, prediction P6, fusion P7, ranking P8)
 │   │   ├── services/        business logic; disease/ (L2) drug/ (L3)
-│   │   │                    candidates/ (L4) features/ (L5) ml/ (P6) fusion/ (P7)
+│   │   │                    candidates/ (L4) features/ (L5) ml/ (P6) fusion/ (P7) ranking/ (P8)
 │   │   ├── data/            biomedical data foundation (Level 1): sources,
 │   │   │                    schemas, identifier normalization, ingestion
 │   │   ├── features/        feature engineering
@@ -41,6 +41,7 @@ sideeffect2cure/
 ├── docs/feature-engineering.md     Level 5 disease-drug feature vectors
 ├── docs/ml-prediction.md           Phase 6 ML prediction + interpretability
 ├── docs/evidence-fusion.md         Phase 7 evidence fusion + repurposing score
+├── docs/candidate-ranking.md       Phase 8 candidate ranking
 └── README.md
 ```
 
@@ -170,6 +171,23 @@ An **internal research prioritization score** — not clinical efficacy, not
 treatment probability, not a recommendation. No ranking. Details:
 **`docs/evidence-fusion.md`**.
 
+## Candidate ranking (Phase 8)
+
+Pure deterministic ordering of the Phase 7 results by `repurposing_score`
+(highest first; ties by `drug_id`), with a 1-based `rank` and an optional
+`top_n`. Every `RankedCandidate` embeds the **full** `EvidenceFusionResult` —
+no evidence lost, no score recalculated.
+
+```python
+from app.services.ranking import rank_for_disease
+ranked = rank_for_disease("Glioblastoma", top_n=10)   # RankedCandidateResult
+[(c.rank, c.drug_name, c.repurposing_score) for c in ranked.candidates]
+```
+
+Ranking is based on the computational `repurposing_score` — it does not
+establish clinical efficacy, treatment suitability, or safety. Details:
+**`docs/candidate-ranking.md`**.
+
 ## Status
 
 - **Level 0** — repository foundation.
@@ -179,7 +197,8 @@ treatment probability, not a recommendation. No ranking. Details:
 - **Level 4** — candidate drug generation.
 - **Level 5** — feature engineering.
 - **Phase 6** — ML prediction + interpretability.
-- **Phase 7** — evidence fusion + repurposing score (this milestone).
+- **Phase 7** — evidence fusion + repurposing score.
+- **Phase 8** — candidate ranking (this milestone).
 
 See `docs/architecture.md` for the full pipeline and per-level status.
 
