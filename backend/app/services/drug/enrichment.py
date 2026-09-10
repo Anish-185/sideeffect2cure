@@ -50,8 +50,14 @@ class ReactomeUniProtIndex:
     def size(self) -> int:
         return len(self._m)
 
-    def pathways_for(self, uniprot_ids: list[str]) -> list[dict]:
-        """Aggregate pathways across a drug's targets, with support counts."""
+    def pathways_for(
+        self, uniprot_ids: list[str], *, limit: int | None = _MAX_PATHWAYS
+    ) -> list[dict]:
+        """Aggregate pathways across a drug's targets, with support counts.
+
+        ``limit`` caps the result (default keeps profiles lean); pass ``None`` for
+        the full set (candidate generation needs every overlap).
+        """
         agg: dict[str, dict] = {}
         for uid in dict.fromkeys(u for u in uniprot_ids if u):
             for reactome_id, name in self._m.get(uid.upper(), []):
@@ -70,7 +76,7 @@ class ReactomeUniProtIndex:
             for v in agg.values()
         ]
         rows.sort(key=lambda r: (-r["supporting_target_count"], r["pathway_name"]))
-        return rows[:_MAX_PATHWAYS]
+        return rows if limit is None else rows[:limit]
 
 
 def _load_index_from_file(path: Path) -> ReactomeUniProtIndex:

@@ -17,9 +17,9 @@ sideeffect2cure/
 │   ├── app/
 │   │   ├── api/             FastAPI routers
 │   │   ├── core/            config, disclaimers
-│   │   ├── models/          Pydantic schemas (disease.py L2, drug.py L3)
-│   │   ├── services/        business logic; disease/ (L2) + drug/ (L3)
-│   │   │                    resolvers + profile builders
+│   │   ├── models/          Pydantic schemas (disease L2, drug L3, candidate L4)
+│   │   ├── services/        business logic; disease/ (L2) drug/ (L3)
+│   │   │                    candidates/ (L4)
 │   │   ├── data/            biomedical data foundation (Level 1): sources,
 │   │   │                    schemas, identifier normalization, ingestion
 │   │   ├── features/        feature engineering
@@ -36,6 +36,7 @@ sideeffect2cure/
 ├── docs/data.md                    Level 1 data foundation (sources, schemas, licensing)
 ├── docs/disease-intelligence.md    Level 2 resolver + disease profile
 ├── docs/drug-intelligence.md       Level 3 resolver + drug profile
+├── docs/candidate-generation.md    Level 4 candidate drug generation
 └── README.md
 ```
 
@@ -97,12 +98,30 @@ p = build_drug_profile("Aspirin")            # or "CHEMBL25", "2244", "DRUG:0001
 Optional sources are chosen by usefulness, not completeness — only Reactome was
 integrated. Details: **`docs/drug-intelligence.md`**.
 
+## Candidate generation (Level 4)
+
+Reduces the 1,430-drug universe to the drugs biologically connected to a
+disease, via two deterministic routes UNION-ed: **gene-target** (disease gene ==
+drug target, joined on HGNC id) and **pathway** (shared Reactome pathway). Every
+candidate keeps the exact relationship(s) that generated it. No score or rank.
+
+```python
+from app.services.disease import build_disease_profile
+from app.services.candidates import generate_candidates
+res = generate_candidates(build_disease_profile("Glioblastoma"))
+res.candidate_count            # 132  (of 1430)
+res.counts_by_method           # {'gene_target': 19, 'pathway': 131, 'both': 18, ...}
+```
+
+Details: **`docs/candidate-generation.md`**.
+
 ## Status
 
 - **Level 0** — repository foundation.
 - **Level 1** — biomedical data foundation.
 - **Level 2** — disease intelligence.
-- **Level 3** — drug intelligence (this milestone).
+- **Level 3** — drug intelligence.
+- **Level 4** — candidate drug generation (this milestone).
 
 See `docs/architecture.md` for the full pipeline and per-level status.
 

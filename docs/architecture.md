@@ -65,4 +65,13 @@ relationships.
   `app.services.drug`, schemas in `app.models.drug`. Optional sources chosen by
   usefulness: Reactome integrated; PubChem/UniProt reused from Level 1;
   Open Targets skipped.
-- Level 4+ : defined by upcoming instructions.
+- **Level 4 (done):** candidate drug generation — see
+  [`candidate-generation.md`](candidate-generation.md). Two deterministic
+  routes UNION-ed: **gene-target** (disease gene == drug target, joined on
+  HGNC id via the HGNC complete set) and **pathway** (shared Reactome pathway,
+  Level 2 disease pathways ∩ Level 3 drug pathways). Output is a
+  `CandidateGenerationResult` where every candidate carries the exact
+  relationship(s) that generated it — **no score, rank or probability**.
+  Business logic in `app.services.candidates`, schemas in
+  `app.models.candidate`.
+- Level 5+ : defined by upcoming instructions.

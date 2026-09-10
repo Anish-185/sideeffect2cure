@@ -161,10 +161,11 @@ def drug_fixture_repo(drug_fixture_frames) -> DrugRepository:
 
 @pytest.fixture
 def fake_pathway_index():
-    """Stands in for the Reactome UniProt->pathway index."""
+    """Stands in for the Reactome UniProt->pathway index (Level 3 + Level 4)."""
 
     class _Idx:
-        def pathways_for(self, uniprot_ids: list[str]) -> list[dict]:
+        def pathways_for(self, uniprot_ids: list[str], *, limit: int | None = None) -> list[dict]:
+            _ = limit
             if "P0TEST1" in uniprot_ids:
                 return [
                     {"reactome_id": "R-HSA-TEST1", "pathway_name": "Test Pathway One",
@@ -183,3 +184,94 @@ def real_drug_repo() -> DrugRepository:
         return DrugRepository.from_loaders()
     except DatasetsNotBuilt:
         pytest.skip("Level 1 processed data not present; run scripts/ingest_data.py")
+
+
+# --- Level 4 (candidate generation) fixtures -------------------------
+@pytest.fixture
+def candidate_disease_profile():
+    """A DiseaseProfile whose gene ensembl / pathway reactome ids line up with
+    the drug fixtures, so both candidate routes can be exercised offline."""
+    from app.services.disease import get_disease_profile
+    from app.services.disease.repository import DiseaseRepository
+
+    diseases = pd.DataFrame(
+        [{"disease_id": "DIS:C1", "disease_name": "candidate test disease",
+          "ontology_id": "MONDO_9900001", "source": "opentargets"}]
+    )
+    genes = pd.DataFrame(
+        [
+            {"disease_id": "DIS:C1", "gene_id": "GENE:C1", "gene_name": "AAA",
+             "ensembl_id": "ENSG000001", "association_score": 0.9, "source": "opentargets"},
+            {"disease_id": "DIS:C1", "gene_id": "GENE:C2", "gene_name": "BBB",
+             "ensembl_id": "ENSG000002", "association_score": 0.5, "source": "opentargets"},
+        ]
+    )
+    pathways = pd.DataFrame(
+        [
+            {"disease_id": "DIS:C1", "pathway_id": "PATH:C1", "pathway_name": "Test Pathway One",
+             "reactome_id": "R-HSA-TEST1", "gene_support_count": 5, "association_score": 0.6,
+             "source": "derived:opentargets+reactome"},
+            {"disease_id": "DIS:C1", "pathway_id": "PATH:C2", "pathway_name": "Unmatched pathway",
+             "reactome_id": "R-HSA-NOPE", "gene_support_count": 3, "association_score": 0.4,
+             "source": "derived:opentargets+reactome"},
+        ]
+    )
+    repo = DiseaseRepository.from_frames(
+        diseases=diseases, disease_genes=genes, disease_pathways=pathways
+    )
+    return get_disease_profile("DIS:C1", repository=repo)
+
+
+@pytest.fixture
+def empty_disease_profile():
+    """A valid DiseaseProfile with no genes and no pathways."""
+    from app.services.disease import get_disease_profile
+    from app.services.disease.repository import DiseaseRepository
+
+    diseases = pd.DataFrame(
+        [{"disease_id": "DIS:E1", "disease_name": "empty disease",
+          "ontology_id": None, "source": "opentargets"}]
+    )
+    empty_genes = pd.DataFrame(
+        columns=["disease_id", "gene_id", "gene_name", "ensembl_id", "association_score", "source"]
+    )
+    empty_pw = pd.DataFrame(
+        columns=["disease_id", "pathway_id", "pathway_name", "reactome_id",
+                 "gene_support_count", "association_score", "source"]
+    )
+    repo = DiseaseRepository.from_frames(
+        diseases=diseases, disease_genes=empty_genes, disease_pathways=empty_pw
+    )
+    return get_disease_profile("DIS:E1", repository=repo)
+
+
+@pytest.fixture
+def candidate_fixture_index(drug_fixture_repo, drug_fixture_frames, fake_pathway_index):
+    from app.services.candidates import CandidateIndex
+    from app.services.candidates.bridge import HGNCBridge
+
+    bridge = HGNCBridge(
+        ensembl_to_hgnc={"ENSG000001": "HGNC:1", "ENSG000002": "HGNC:2"},
+        uniprot_to_hgnc={"P0TEST1": "HGNC:1"},
+        hgnc_to_symbol={"HGNC:1": "AAA", "HGNC:2": "BBB"},
+    )
+    return CandidateIndex.build(
+        drug_repo=drug_fixture_repo,
+        hgnc_bridge=bridge,
+        reactome_index=fake_pathway_index,
+        drug_targets=drug_fixture_frames["drug_targets"],
+    )
+
+
+@pytest.fixture
+def real_candidate_index():
+    from app.data.loaders import DatasetsNotBuilt
+    from app.services.candidates import CandidateIndex
+
+    try:
+        idx = CandidateIndex.build()
+    except DatasetsNotBuilt:
+        pytest.skip("Level 1 processed data not present; run scripts/ingest_data.py")
+    if not idx.gene_target_available and not idx.pathway_available:
+        pytest.skip("neither HGNC nor Reactome enrichment available in this environment")
+    return idx

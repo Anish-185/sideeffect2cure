@@ -4,8 +4,14 @@ Business logic lives here, kept out of the FastAPI route layer.
 
 - Level 2: :mod:`app.services.disease` — disease resolver + disease profile.
 - Level 3: :mod:`app.services.drug` — drug resolver + drug profile.
+- Level 4: :mod:`app.services.candidates` — candidate drug generation.
 """
 
+from app.services.candidates import (
+    generate_candidates,
+    generate_candidates_by_gene_target,
+    generate_candidates_by_pathway,
+)
 from app.services.disease import (
     DiseaseResolver,
     build_disease_profile,
@@ -24,6 +30,9 @@ __all__ = [
     "DrugResolver",
     "build_disease_profile",
     "build_drug_profile",
+    "generate_candidates",
+    "generate_candidates_by_gene_target",
+    "generate_candidates_by_pathway",
     "get_disease_profile",
     "get_drug_profile",
     "resolve_disease",
