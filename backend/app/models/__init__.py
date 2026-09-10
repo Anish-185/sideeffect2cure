@@ -44,6 +44,14 @@ from app.models.feature import (
     FeatureVector,
     FeatureVectorMetadata,
 )
+from app.models.fusion import (
+    SCORING_VERSION,
+    DrugCharacterizationContext,
+    EvidenceComponent,
+    EvidenceFusionResult,
+    FusionProvenance,
+    SideEffectContext,
+)
 from app.models.prediction import (
     PREDICTION_SCHEMA_VERSION,
     FeatureContribution,
@@ -55,6 +63,7 @@ from app.models.prediction import (
 __all__ = [
     "FEATURE_SCHEMA_VERSION",
     "PREDICTION_SCHEMA_VERSION",
+    "SCORING_VERSION",
     "CandidateDrug",
     "CandidateGenerationProvenance",
     "CandidateGenerationReason",
@@ -63,6 +72,7 @@ __all__ = [
     "DiseaseMolecularProfile",
     "DiseaseProfile",
     "DrugBiologicalContext",
+    "DrugCharacterizationContext",
     "DrugMatch",
     "DrugMatchType",
     "DrugProfile",
@@ -70,9 +80,12 @@ __all__ = [
     "DrugResolutionResult",
     "DrugResolutionStatus",
     "DrugTargetAssociation",
+    "EvidenceComponent",
+    "EvidenceFusionResult",
     "FeatureContribution",
     "FeatureVector",
     "FeatureVectorMetadata",
+    "FusionProvenance",
     "GeneAssociation",
     "GeneTargetMatch",
     "GenerationMethod",
@@ -87,5 +100,6 @@ __all__ = [
     "ResolutionResult",
     "ResolutionStatus",
     "SideEffect",
+    "SideEffectContext",
     "ValidationSummary",
 ]

@@ -93,4 +93,16 @@ relationships.
   ids for later graph wiring. **A model output is not a repurposing score and
   not clinical efficacy — no ranking, no fusion.** Business logic in
   `app.services.ml`, schemas in `app.models.prediction`.
-- Phase 7+ : defined by upcoming instructions.
+- **Phase 7 (done):** evidence fusion + repurposing score — see
+  [`evidence-fusion.md`](evidence-fusion.md). Collapses the Level 5 features
+  into **3 independent evidence families** (gene-target, pathway, ML — no
+  double counting), normalizes each to `[0,1]`, and combines them with an
+  explicit prototype `FusionConfig` into a transparent **0-100
+  `repurposing_score`** (weighted mean, weights **renormalized over available
+  components** — missing evidence is never treated as negative). Every
+  `EvidenceComponent` keeps its value / weight / formula / supporting data /
+  provenance; side effects and drug characterization are descriptive context,
+  not scored. The score is an **internal research prioritization score**, not
+  clinical efficacy — **no ranking here**. Business logic in
+  `app.services.fusion`, schemas in `app.models.fusion`.
+- Phase 8+ : defined by upcoming instructions.

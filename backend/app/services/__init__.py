@@ -7,6 +7,7 @@ Business logic lives here, kept out of the FastAPI route layer.
 - Level 4: :mod:`app.services.candidates` — candidate drug generation.
 - Level 5: :mod:`app.services.features` — disease-drug feature engineering.
 - Phase 6: :mod:`app.services.ml` — ML prediction + interpretability.
+- Phase 7: :mod:`app.services.fusion` — evidence fusion + repurposing score.
 """
 
 from app.services.candidates import (
@@ -30,6 +31,7 @@ from app.services.features import (
     build_feature_vector,
     build_feature_vectors,
 )
+from app.services.fusion import fuse_all, fuse_evidence, fuse_for_disease
 from app.services.ml import predict, predict_for_disease
 
 __all__ = [
@@ -39,6 +41,9 @@ __all__ = [
     "build_drug_profile",
     "build_feature_vector",
     "build_feature_vectors",
+    "fuse_all",
+    "fuse_evidence",
+    "fuse_for_disease",
     "generate_candidates",
     "generate_candidates_by_gene_target",
     "generate_candidates_by_pathway",

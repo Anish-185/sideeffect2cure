@@ -18,9 +18,9 @@ sideeffect2cure/
 │   │   ├── api/             FastAPI routers
 │   │   ├── core/            config, disclaimers
 │   │   ├── models/          schemas (disease L2, drug L3, candidate L4,
-│   │   │                    feature L5, prediction P6)
+│   │   │                    feature L5, prediction P6, fusion P7)
 │   │   ├── services/        business logic; disease/ (L2) drug/ (L3)
-│   │   │                    candidates/ (L4) features/ (L5) ml/ (P6)
+│   │   │                    candidates/ (L4) features/ (L5) ml/ (P6) fusion/ (P7)
 │   │   ├── data/            biomedical data foundation (Level 1): sources,
 │   │   │                    schemas, identifier normalization, ingestion
 │   │   ├── features/        feature engineering
@@ -40,6 +40,7 @@ sideeffect2cure/
 ├── docs/candidate-generation.md    Level 4 candidate drug generation
 ├── docs/feature-engineering.md     Level 5 disease-drug feature vectors
 ├── docs/ml-prediction.md           Phase 6 ML prediction + interpretability
+├── docs/evidence-fusion.md         Phase 7 evidence fusion + repurposing score
 └── README.md
 ```
 
@@ -152,6 +153,23 @@ results[0].model_output, results[0].important_features
 A model output is **not** a repurposing score and **not** clinical efficacy —
 no ranking, no fusion. Details: **`docs/ml-prediction.md`**.
 
+## Evidence fusion + repurposing score (Phase 7)
+
+Combines the 3 independent evidence families (gene-target, pathway, ML — no
+double counting) into a transparent **0-100 `repurposing_score`**, keeping every
+component's value / weight / formula / provenance. Missing evidence is excluded
+and the weights renormalized — never treated as negative.
+
+```python
+from app.services.fusion import fuse_for_disease
+results = fuse_for_disease("Glioblastoma")   # list[EvidenceFusionResult]
+results[0].repurposing_score, results[0].components
+```
+
+An **internal research prioritization score** — not clinical efficacy, not
+treatment probability, not a recommendation. No ranking. Details:
+**`docs/evidence-fusion.md`**.
+
 ## Status
 
 - **Level 0** — repository foundation.
@@ -160,7 +178,8 @@ no ranking, no fusion. Details: **`docs/ml-prediction.md`**.
 - **Level 3** — drug intelligence.
 - **Level 4** — candidate drug generation.
 - **Level 5** — feature engineering.
-- **Phase 6** — ML prediction + interpretability (this milestone).
+- **Phase 6** — ML prediction + interpretability.
+- **Phase 7** — evidence fusion + repurposing score (this milestone).
 
 See `docs/architecture.md` for the full pipeline and per-level status.
 
