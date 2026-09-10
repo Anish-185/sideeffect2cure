@@ -82,4 +82,15 @@ relationships.
   overlap / side-effect / target-action / drug-structural groups. **No score,
   probability, rank, ML or fusion.** Business logic in
   `app.services.features`, schemas in `app.models.feature`.
-- Level 6+ : defined by upcoming instructions.
+- **Phase 6 (done):** ML prediction + interpretability — see
+  [`ml-prediction.md`](ml-prediction.md). Supervised on a **real, defensible
+  target** (Open Targets `drugAndClinicalCandidates` — "drug has a known
+  clinical indication for this disease"; positive/unlabeled weak supervision).
+  Baselines: logistic regression + random forest, **GroupKFold by disease_id**,
+  selected by PR-AUC. Each `PredictionResult` carries the model output, its
+  `baseline_output`, the top contributing **Level 5 features** for that row
+  (exact tree-path / coefficient contributions, no SHAP dependency), and the
+  ids for later graph wiring. **A model output is not a repurposing score and
+  not clinical efficacy — no ranking, no fusion.** Business logic in
+  `app.services.ml`, schemas in `app.models.prediction`.
+- Phase 7+ : defined by upcoming instructions.

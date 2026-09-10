@@ -17,9 +17,10 @@ sideeffect2cure/
 │   ├── app/
 │   │   ├── api/             FastAPI routers
 │   │   ├── core/            config, disclaimers
-│   │   ├── models/          schemas (disease L2, drug L3, candidate L4, feature L5)
+│   │   ├── models/          schemas (disease L2, drug L3, candidate L4,
+│   │   │                    feature L5, prediction P6)
 │   │   ├── services/        business logic; disease/ (L2) drug/ (L3)
-│   │   │                    candidates/ (L4) features/ (L5)
+│   │   │                    candidates/ (L4) features/ (L5) ml/ (P6)
 │   │   ├── data/            biomedical data foundation (Level 1): sources,
 │   │   │                    schemas, identifier normalization, ingestion
 │   │   ├── features/        feature engineering
@@ -31,13 +32,14 @@ sideeffect2cure/
 ├── frontend/                React + TypeScript dashboard (not yet scaffolded)
 ├── data/                    raw / processed / features (git-ignored contents)
 ├── notebooks/
-├── scripts/                ingest_data.py / validate_data.py (Level 1)
+├── scripts/                ingest_data.py, validate_data.py (L1), train_model.py (P6)
 ├── docs/architecture.md            canonical pipeline + level status
 ├── docs/data.md                    Level 1 data foundation (sources, schemas, licensing)
 ├── docs/disease-intelligence.md    Level 2 resolver + disease profile
 ├── docs/drug-intelligence.md       Level 3 resolver + drug profile
 ├── docs/candidate-generation.md    Level 4 candidate drug generation
 ├── docs/feature-engineering.md     Level 5 disease-drug feature vectors
+├── docs/ml-prediction.md           Phase 6 ML prediction + interpretability
 └── README.md
 ```
 
@@ -130,6 +132,26 @@ vectors[0].to_feature_dict()   # flat {name: number|bool|None} for Level 6
 
 Details: **`docs/feature-engineering.md`**.
 
+## ML prediction + interpretability (Phase 6)
+
+Trains a small interpretable classifier (logistic regression / random forest,
+GroupKFold by disease) on a **real** target — whether a candidate drug has a
+known clinical indication for the disease (Open Targets, positive/unlabeled).
+Each `PredictionResult` carries the model output, its baseline, and the top
+contributing **Level 5 features** for that prediction.
+
+```bash
+python scripts/train_model.py        # build dataset, cross-validate, fit, save
+```
+```python
+from app.services.ml import predict_for_disease
+results = predict_for_disease("Glioblastoma")   # list[PredictionResult]
+results[0].model_output, results[0].important_features
+```
+
+A model output is **not** a repurposing score and **not** clinical efficacy —
+no ranking, no fusion. Details: **`docs/ml-prediction.md`**.
+
 ## Status
 
 - **Level 0** — repository foundation.
@@ -137,7 +159,8 @@ Details: **`docs/feature-engineering.md`**.
 - **Level 2** — disease intelligence.
 - **Level 3** — drug intelligence.
 - **Level 4** — candidate drug generation.
-- **Level 5** — feature engineering (this milestone).
+- **Level 5** — feature engineering.
+- **Phase 6** — ML prediction + interpretability (this milestone).
 
 See `docs/architecture.md` for the full pipeline and per-level status.
 

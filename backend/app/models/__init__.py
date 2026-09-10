@@ -44,9 +44,17 @@ from app.models.feature import (
     FeatureVector,
     FeatureVectorMetadata,
 )
+from app.models.prediction import (
+    PREDICTION_SCHEMA_VERSION,
+    FeatureContribution,
+    PredictionModelMetadata,
+    PredictionResult,
+    ValidationSummary,
+)
 
 __all__ = [
     "FEATURE_SCHEMA_VERSION",
+    "PREDICTION_SCHEMA_VERSION",
     "CandidateDrug",
     "CandidateGenerationProvenance",
     "CandidateGenerationReason",
@@ -62,6 +70,7 @@ __all__ = [
     "DrugResolutionResult",
     "DrugResolutionStatus",
     "DrugTargetAssociation",
+    "FeatureContribution",
     "FeatureVector",
     "FeatureVectorMetadata",
     "GeneAssociation",
@@ -72,8 +81,11 @@ __all__ = [
     "PathwayAssociation",
     "PathwayContext",
     "PathwayMatch",
+    "PredictionModelMetadata",
+    "PredictionResult",
     "ProfileProvenance",
     "ResolutionResult",
     "ResolutionStatus",
     "SideEffect",
+    "ValidationSummary",
 ]
