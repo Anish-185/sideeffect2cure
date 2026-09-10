@@ -17,8 +17,9 @@ sideeffect2cure/
 │   ├── app/
 │   │   ├── api/             FastAPI routers
 │   │   ├── core/            config, disclaimers
-│   │   ├── models/          Pydantic schemas
-│   │   ├── services/        pipeline orchestration
+│   │   ├── models/          Pydantic schemas (disease.py — Level 2)
+│   │   ├── services/        business logic; services/disease/ — Level 2
+│   │   │                    resolver + profile builder
 │   │   ├── data/            biomedical data foundation (Level 1): sources,
 │   │   │                    schemas, identifier normalization, ingestion
 │   │   ├── features/        feature engineering
@@ -31,8 +32,9 @@ sideeffect2cure/
 ├── data/                    raw / processed / features (git-ignored contents)
 ├── notebooks/
 ├── scripts/                ingest_data.py / validate_data.py (Level 1)
-├── docs/architecture.md    canonical pipeline + level status
-├── docs/data.md            Level 1 data foundation (sources, schemas, licensing)
+├── docs/architecture.md            canonical pipeline + level status
+├── docs/data.md                    Level 1 data foundation (sources, schemas, licensing)
+├── docs/disease-intelligence.md    Level 2 resolver + disease profile
 └── README.md
 ```
 
@@ -63,10 +65,26 @@ python scripts/validate_data.py     # cross-table data-quality checks
 Downloaded and generated data under `data/**` is git-ignored — regenerate it
 with the script. Full details, schemas and licensing: **`docs/data.md`**.
 
+## Disease intelligence (Level 2)
+
+Resolves a disease name / id / ontology id / alias to a canonical
+`DiseaseProfile` (associated genes + derived pathways + provenance + a
+deterministic summary). No fuzzy matching — unknown queries return an explicit
+"not supported" result.
+
+```python
+from app.services.disease import build_disease_profile
+p = build_disease_profile("Glioblastoma")   # or "GBM", "MONDO_0018177"
+[g.gene_name for g in p.genes[:5]]           # ['TP53', 'IDH1', 'EGFR', 'PTEN', 'BRAF']
+```
+
+Details: **`docs/disease-intelligence.md`**.
+
 ## Status
 
 - **Level 0** — repository foundation.
-- **Level 1** — biomedical data foundation (this milestone).
+- **Level 1** — biomedical data foundation.
+- **Level 2** — disease intelligence (this milestone).
 
 See `docs/architecture.md` for the full pipeline and per-level status.
 

@@ -1,0 +1,61 @@
+# Lexical alias -> disease ontology id, for the DiseaseResolver (Level 2).
+#
+# These are NAME synonyms / abbreviations only -- no biological content. Each
+# alias must point at an ontology id that is actually present in the ingested
+# `diseases` dataset; aliases whose target is not ingested are ignored (and
+# reported), never invented. Matching is case-insensitive and whitespace-
+# normalized, so only add forms that differ after that normalization.
+#
+# Format:  <alias><TAB><ontology_id>       ('#' comments and blank lines ignored)
+
+gbm	MONDO_0018177
+glioblastoma multiforme	MONDO_0018177
+
+als	MONDO_0004976
+lou gehrig disease	MONDO_0004976
+lou gehrigs disease	MONDO_0004976
+
+ms	MONDO_0005301
+
+sle	MONDO_0007915
+lupus	MONDO_0007915
+
+aml	MONDO_0018874
+
+dlbcl	MONDO_0018905
+
+gist	MONDO_0011719
+
+hcc	MONDO_0007256
+
+t1d	MONDO_0005147
+t1dm	MONDO_0005147
+type 1 diabetes	MONDO_0005147
+
+t2d	MONDO_0005148
+t2dm	MONDO_0005148
+type 2 diabetes	MONDO_0005148
+adult onset diabetes	MONDO_0005148
+
+ibd	MONDO_0005265
+
+mdd	MONDO_0002009
+depression	MONDO_0002009
+clinical depression	MONDO_0002009
+
+ckd	MONDO_0005300
+
+copd	MONDO_0005087
+
+alzheimers	MONDO_0004975
+alzheimers disease	MONDO_0004975
+ad	MONDO_0004975
+
+parkinsons	MONDO_0005180
+parkinsons disease	MONDO_0005180
+pd	MONDO_0005180
+
+covid	MONDO_0100096
+covid19	MONDO_0100096
+coronavirus disease 2019	MONDO_0100096
+sars-cov-2 infection	MONDO_0100096

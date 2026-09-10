@@ -51,4 +51,10 @@ relationships.
   crosswalk, built from SIDER / ChEMBL / Open Targets / Reactome by a
   reproducible ingestion pipeline (`app.data.ingest`) with cross-table quality
   checks (`app.data.quality`).
-- Level 2+ : defined by upcoming instructions.
+- **Level 2 (done):** disease intelligence — see
+  [`disease-intelligence.md`](disease-intelligence.md). `DiseaseResolver`
+  (query → supported disease, no fuzzy matching) and the canonical
+  `DiseaseProfile` (genes + pathways + provenance + deterministic summary),
+  built from the Level 1 datasets. Business logic in `app.services.disease`,
+  schemas in `app.models.disease`.
+- Level 3+ : defined by upcoming instructions.
