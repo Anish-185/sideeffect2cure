@@ -1,0 +1,356 @@
+@import "tailwindcss";
+
+/* =====================================================================
+   SideEffect2Cure AI — cyanotype design system
+
+   One ink (blue) on one paper (pale blue-grey), with a single warm accent
+   reserved for the ML signal. The system is built from rules and type
+   rather than cards: hairline rails frame the column, labels are mono and
+   uppercase, and the artwork is cyanotype cutouts derived from the
+   reference sheet (see scripts/build-art.py).
+   ===================================================================== */
+
+@theme {
+  /* -- paper ---------------------------------------------------------- */
+  --color-paper: #f2f5fc;
+  --color-paper-raised: #ffffff;
+  --color-paper-sunk: #e7edfa;
+  --color-wash: #e3ebff;
+
+  /* -- ink ------------------------------------------------------------ */
+  --color-ink: #0a1024;
+  --color-ink-soft: #545e7a;
+  --color-ink-faint: #8a93ad;
+
+  /* -- rules ---------------------------------------------------------- */
+  --color-rule: #d5dded;
+  --color-rule-soft: #e4eaf7;
+
+  /* -- brand blue ----------------------------------------------------- */
+  --color-blue: #123ad6;
+  --color-blue-bright: #1a56ff;
+  --color-navy: #07165c;
+  --color-navy-deep: #050f3e;
+
+  /* -- on-navy -------------------------------------------------------- */
+  --color-navy-text: #eaf0ff;
+  --color-navy-muted: #93a8e8;
+  --color-navy-faint: #5c73c4;
+  --color-navy-line: #1c2f80;
+
+  /* -- the one warm accent: reserved for the model signal so the eye
+     learns that orange always means "this came from the model", never
+     "this is biology". ------------------------------------------------ */
+  --color-amber: #c2571e;
+  --color-amber-soft: #f4e6dc;
+
+  /* -- evidence families ---------------------------------------------- */
+  --color-gene: #123ad6;
+  --color-pathway: #0f7b8f;
+  --color-ml: #c2571e;
+
+  /* -- status --------------------------------------------------------- */
+  --color-positive: #0f7a4a;
+  --color-negative: #b8341f;
+
+  /* -- breakpoints -----------------------------------------------------
+     One extra stop below Tailwind's `sm`, for the handful of places where
+     something has to drop out on a genuinely narrow phone. */
+  --breakpoint-xs: 26rem;
+
+  /* -- type ----------------------------------------------------------- */
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "cv05", "ss01";
+  }
+
+  ::selection {
+    background: var(--color-blue);
+    color: #fff;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-blue-bright);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* -- the column rails ------------------------------------------------
+     Supermemory's signature framing: the content column is drawn as a
+     physical object with hairlines running its full height. The rails are
+     pseudo-elements so they never take part in layout. */
+  .frame {
+    position: relative;
+    margin-inline: auto;
+    width: 100%;
+    max-width: 76rem;
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .frame {
+      padding-inline: 4rem;
+    }
+
+    .frame--railed::before,
+    .frame--railed::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--color-rule);
+      pointer-events: none;
+    }
+
+    .frame--railed::before {
+      left: 2rem;
+    }
+
+    .frame--railed::after {
+      right: 2rem;
+    }
+  }
+
+  /* -- mono label ------------------------------------------------------ */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+
+  .label-ink {
+    color: var(--color-blue);
+  }
+
+  .label-on-navy {
+    color: var(--color-navy-muted);
+  }
+
+  /* -- bracketed box ---------------------------------------------------
+     The corner ticks from the reference's secondary buttons. Drawn with
+     two layered gradients rather than four elements. */
+  .bracket {
+    position: relative;
+    background:
+      linear-gradient(var(--bk, var(--color-blue)), var(--bk, var(--color-blue))) 0 0 / 7px 1px no-repeat,
+      linear-gradient(var(--bk, var(--color-blue)), var(--bk, var(--color-blue))) 0 0 / 1px 7px no-repeat,
+      linear-gradient(var(--bk, var(--color-blue)), var(--bk, var(--color-blue))) 100% 0 / 7px 1px no-repeat,
+      linear-gradient(var(--bk, var(--color-blue)), var(--bk, var(--color-blue))) 100% 0 / 1px 7px no-repeat,
+      linear-gradient(var(--bk, var(--color-blue)), var(--bk, var(--color-blue))) 0 100% / 7px 1px no-repeat,
+      linear-gradient(var(--bk, var(--color-blue)), var(--bk, var(--color-blue))) 0 100% / 1px 7px no-repeat,
+      linear-gradient(var(--bk, var(--color-blue)), var(--bk, var(--color-blue))) 100% 100% / 7px 1px no-repeat,
+      linear-gradient(var(--bk, var(--color-blue)), var(--bk, var(--color-blue))) 100% 100% / 1px 7px no-repeat;
+  }
+
+  /* -- buttons --------------------------------------------------------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.8125rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease,
+      transform 180ms ease;
+  }
+
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background: var(--color-blue);
+    color: #fff;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-blue-bright);
+  }
+
+  .btn-ghost {
+    background: var(--color-paper-raised);
+    color: var(--color-ink);
+  }
+
+  .btn-ghost:hover:not(:disabled) {
+    color: var(--color-blue);
+  }
+
+  .btn-on-navy {
+    background: transparent;
+    color: var(--color-navy-text);
+    --bk: var(--color-navy-faint);
+  }
+
+  .btn-on-navy:hover:not(:disabled) {
+    background: rgb(255 255 255 / 0.07);
+  }
+
+  /* -- hairline separators --------------------------------------------- */
+  .rule-t {
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .rule-b {
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .rule-dotted {
+    border-top: 1px dashed var(--color-rule);
+  }
+
+  /* -- the digit-art band ----------------------------------------------
+     Pre-rendered numeral texture (scripts/build-art.py) sitting inside a
+     full-bleed navy band, masked so it fades into the field rather than
+     ending on a hard edge. */
+  .digit-art {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    line-height: 0.72;
+    letter-spacing: 0.04em;
+    white-space: pre;
+    color: var(--color-navy-muted);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* -- data type ------------------------------------------------------- */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .id-chip {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+    color: var(--color-ink-soft);
+    background: var(--color-paper-sunk);
+    padding: 0.125rem 0.375rem;
+    white-space: nowrap;
+  }
+}
+
+@layer utilities {
+  /* -- scroll reveal ---------------------------------------------------
+     Sections rise a short distance and fade in once. The transform is kept
+     small on purpose — the reference's motion reads as settling, not
+     sliding. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  .reveal-1 {
+    transition-delay: 80ms;
+  }
+  .reveal-2 {
+    transition-delay: 160ms;
+  }
+  .reveal-3 {
+    transition-delay: 240ms;
+  }
+  .reveal-4 {
+    transition-delay: 320ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .drift,
+    .pulse-slow {
+      animation: none !important;
+    }
+  }
+
+  /* -- ambient motion --------------------------------------------------- */
+  .drift {
+    animation: drift 22s ease-in-out infinite;
+  }
+
+  @keyframes drift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+    50% {
+      transform: translate3d(0, -14px, 0) rotate(-1.1deg);
+    }
+  }
+
+  .pulse-slow {
+    animation: pulse-slow 4.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-slow {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .fade-mask-b {
+    mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+  }
+
+  .fade-mask-r {
+    mask-image: linear-gradient(to right, #000 40%, transparent 100%);
+  }
+
+  .fade-mask-radial {
+    mask-image: radial-gradient(ellipse at center, #000 35%, transparent 72%);
+  }
+}

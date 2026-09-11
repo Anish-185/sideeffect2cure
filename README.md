@@ -19,10 +19,10 @@ sideeffect2cure/
 │   │   ├── core/            config, disclaimers
 │   │   ├── models/          schemas (disease L2, drug L3, candidate L4,
 │   │   │                    feature L5, prediction P6, fusion P7, ranking P8,
-│   │   │                    explanation P9)
+│   │   │                    explanation P9, graph P10)
 │   │   ├── services/        business logic; disease/ (L2) drug/ (L3)
 │   │   │                    candidates/ (L4) features/ (L5) ml/ (P6) fusion/ (P7)
-│   │   │                    ranking/ (P8) explanation/ (P9)
+│   │   │                    ranking/ (P8) explanation/ (P9) graph/ (P10)
 │   │   ├── data/            biomedical data foundation (Level 1): sources,
 │   │   │                    schemas, identifier normalization, ingestion
 │   │   ├── features/        feature engineering
@@ -31,11 +31,16 @@ sideeffect2cure/
 │   ├── tests/
 │   ├── requirements.txt
 │   └── pyproject.toml
-├── frontend/                React + TypeScript dashboard (not yet scaffolded)
+├── frontend/                React + TypeScript site — one page per pipeline stage
+│   ├── src/api/             typed mirror of the backend schemas + fetch client
+│   ├── src/pages/           the 11 routes (home, how-it-works, 9 capabilities)
+│   ├── src/components/ui/   the design primitives the pages compose
+│   ├── scripts/build-art.py derives the cyanotype artwork + digit textures
+│   └── public/art/          generated artwork (committed)
 ├── data/                    raw / processed / features (git-ignored contents)
 ├── notebooks/
 ├── scripts/                ingest_data.py, validate_data.py (L1), train_model.py (P6),
-│                           explain_candidates.py (P9)
+│                           explain_candidates.py (P9), build_evidence_graph.py (P10)
 ├── docs/architecture.md            canonical pipeline + level status
 ├── docs/data.md                    Level 1 data foundation (sources, schemas, licensing)
 ├── docs/disease-intelligence.md    Level 2 resolver + disease profile
@@ -46,6 +51,7 @@ sideeffect2cure/
 ├── docs/evidence-fusion.md         Phase 7 evidence fusion + repurposing score
 ├── docs/candidate-ranking.md       Phase 8 candidate ranking
 ├── docs/ai-explanation.md          Phase 9 grounded AI-powered candidate explanation
+├── docs/evidence-graph.md          Phase 10 evidence graph
 └── README.md
 ```
 
@@ -59,6 +65,24 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload      # http://127.0.0.1:8000/docs
 pytest                             # run tests
 ```
+
+Set `FEATHERLESS_API_KEY` to enable the Phase 9 DeepSeek explanation provider.
+Without it the backend returns its deterministic summary instead, and the
+frontend labels the difference — it never presents one as the other.
+
+## Frontend quickstart
+
+```bash
+cd frontend
+npm install
+npm run dev        # http://localhost:5173 — expects the backend on :8000
+npm test           # vitest
+npm run build      # typecheck + production build
+```
+
+Every number the site shows comes from a backend response; the frontend holds
+no scientific logic of its own. The artwork is derived from a single reference
+sheet by `scripts/build-art.py` — re-run it only if that sheet changes.
 
 ## Data foundation (Level 1)
 
@@ -218,6 +242,28 @@ An explanation **summarizes computational evidence already produced by the
 pipeline** — it does not establish clinical efficacy, safety, treatment
 suitability, or cure. Details: **`docs/ai-explanation.md`**.
 
+## Evidence graph (Phase 10)
+
+Turns one or an explicit top-N ranked candidates into a frontend-ready
+**evidence graph** (`nodes[]` + `edges[]`) that visually answers "why was
+this drug prioritized?" — disease → disease genes → drug targets / pathways →
+drug → ML prediction → evidence → score → rank → AI explanation. A pure
+representation layer: every node/edge comes from a field Levels 4-9 already
+computed (with its real provenance), nothing is inferred, no score/rank is
+recalculated, and identical evidence shared by two candidates dedups to one
+node.
+
+```bash
+python scripts/build_evidence_graph.py "Glioblastoma" --top-n 3
+```
+```python
+from app.services.graph import build_graph_for_disease
+graph = build_graph_for_disease("Glioblastoma", top_n=1)
+graph.metadata.n_nodes, graph.metadata.n_edges, graph.to_frontend_dict()
+```
+
+Details: **`docs/evidence-graph.md`**.
+
 ## Status
 
 - **Level 0** — repository foundation.
@@ -229,7 +275,8 @@ suitability, or cure. Details: **`docs/ai-explanation.md`**.
 - **Phase 6** — ML prediction + interpretability.
 - **Phase 7** — evidence fusion + repurposing score.
 - **Phase 8** — candidate ranking.
-- **Phase 9** — grounded AI-powered candidate explanation (this milestone).
+- **Phase 9** — grounded AI-powered candidate explanation.
+- **Phase 10** — evidence graph (this milestone).
 
 See `docs/architecture.md` for the full pipeline and per-level status.
 
