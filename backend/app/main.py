@@ -8,6 +8,8 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.intelligence import router as intelligence_router
+from app.api.pipeline import router as pipeline_router
 from app.api.routes import router
 from app.core.config import get_settings
 
@@ -24,6 +26,8 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(router, prefix="/api")
+    app.include_router(pipeline_router, prefix="/api")
+    app.include_router(intelligence_router, prefix="/api")
     return app
 
 

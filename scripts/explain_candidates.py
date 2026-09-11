@@ -22,6 +22,7 @@ import argparse
 import sys
 
 import _bootstrap  # noqa: F401
+
 from app.services.disease.errors import DiseaseIntelligenceError
 from app.services.explanation import default_provider, explain_top_n
 from app.services.ml.model import ModelNotTrainedError

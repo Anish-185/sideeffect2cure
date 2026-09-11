@@ -20,8 +20,8 @@ User Disease Query
     -> ML Prediction
     -> Evidence Fusion
     -> Candidate Ranking
-    -> AI Explanation           (Phase 9 — this milestone)
-    -> Evidence Graph           (Phase 10 — future)
+    -> AI Explanation
+    -> Evidence Graph           (Phase 10 — this milestone)
     -> Dashboard                (future)
     -> OCR                      (future)
 ```
@@ -44,8 +44,9 @@ relationships.
 | `explainability` | rationale generation from model output + evidence |
 
 `app.services.explanation` (Phase 9) is the AI-explanation business logic
-package; `explainability`/`ml` above are the original Level-0 placeholders it
-grew out of.
+package; `app.services.graph` (Phase 10) is the evidence-graph business logic
+package; `explainability`/`ml` above are the original Level-0 placeholders
+they grew out of.
 
 ## Level status
 
@@ -132,4 +133,18 @@ grew out of.
   pipeline never depends on the LLM being reachable. No new score, no
   reranking, no new biological relationships. Business logic in
   `app.services.explanation`, schemas in `app.models.explanation`.
-- Phase 10+ (evidence graph, dashboard, OCR): defined by upcoming instructions.
+- **Phase 10 (done):** evidence graph — see
+  [`evidence-graph.md`](evidence-graph.md). A pure **representation** layer:
+  turns one or an explicit top-N `RankedCandidate`s (+ the Level 4
+  `CandidateDrug` each needs for its gene-target/pathway provenance, +
+  optional Phase 9 `CandidateExplanation`s) into a frontend-ready
+  `EvidenceGraph` (`nodes[]` + `edges[]`). Node types: disease, disease gene,
+  drug, drug target, pathway, prediction, evidence component, score, rank,
+  explanation — created only when the corresponding evidence actually
+  exists. Every biological edge keeps the exact provenance string Level 4
+  already recorded for it (`GeneTargetMatch`/`PathwayMatch` sources); no
+  relationship is inferred, no score/rank is recalculated, ids are
+  deterministic so identical evidence for two candidates dedups to one node.
+  No graph database, no external call. Business logic in
+  `app.services.graph`, schemas in `app.models.graph`.
+- Phase 11+ (dashboard, OCR): defined by upcoming instructions.
