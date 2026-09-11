@@ -20,8 +20,10 @@ User Disease Query
     -> ML Prediction
     -> Evidence Fusion
     -> Candidate Ranking
-    -> Explainability
-    -> Dashboard
+    -> AI Explanation           (Phase 9 — this milestone)
+    -> Evidence Graph           (Phase 10 — future)
+    -> Dashboard                (future)
+    -> OCR                      (future)
 ```
 
 Optional evidence layers to integrate later: drug-induced gene-expression
@@ -40,6 +42,10 @@ relationships.
 | `features`       | feature engineering |
 | `ml`             | lightweight interpretable models, train/inference |
 | `explainability` | rationale generation from model output + evidence |
+
+`app.services.explanation` (Phase 9) is the AI-explanation business logic
+package; `explainability`/`ml` above are the original Level-0 placeholders it
+grew out of.
 
 ## Level status
 
@@ -113,4 +119,17 @@ relationships.
   **embeds the full `EvidenceFusionResult`** — no evidence lost. No score
   recalculated, no biology touched, no new dependency. Business logic in
   `app.services.ranking`, schemas in `app.models.ranking`.
-- Phase 9+ : defined by upcoming instructions.
+- **Phase 9 (done):** grounded AI-powered candidate explanation — see
+  [`ai-explanation.md`](ai-explanation.md). `RankedCandidate` -> a compact
+  `ExplanationContext` -> DeepSeek V4 Flash (via Featherless,
+  OpenAI-compatible API) -> a validated `CandidateExplanation`. The LLM is an
+  **explanation layer only**: every structural field (score, rank, evidence
+  value/contribution/supporting ids) is built deterministically from Phase
+  7/8; the model may only supply narrated prose, and only after it passes
+  grounding validation (echoed identity matches, no fabricated identifiers, no
+  banned clinical-claim language) — any failure falls back to a deterministic,
+  template-based explanation (`DeterministicExplanationProvider`), so the
+  pipeline never depends on the LLM being reachable. No new score, no
+  reranking, no new biological relationships. Business logic in
+  `app.services.explanation`, schemas in `app.models.explanation`.
+- Phase 10+ (evidence graph, dashboard, OCR): defined by upcoming instructions.

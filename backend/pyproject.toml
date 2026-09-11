@@ -3,6 +3,7 @@ pythonpath = ["."]
 testpaths = ["tests"]
 markers = [
     "slow: test touches a large local file or the network (Reactome enrichment)",
+    "live: test makes one real call to an external API; skipped unless credentials are set locally",
 ]
 
 [tool.ruff]

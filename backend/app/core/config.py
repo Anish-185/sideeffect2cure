@@ -9,6 +9,7 @@ from __future__ import annotations
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Repository layout anchors.
@@ -43,6 +44,20 @@ class Settings(BaseSettings):
     http_user_agent: str = "SideEffect2Cure-AI/prototype (research; contact via repo)"
 
     cors_origins: list[str] = ["http://localhost:5173", "http://localhost:3000"]
+
+    # Phase 9: AI-powered candidate explanation (DeepSeek V4 Flash via Featherless).
+    # Read from the bare env var name (NOT the SE2C_ prefix) so it matches the
+    # convention documented in docs/ai-explanation.md and the .env.example file.
+    # Never given a default value — its absence is how the deterministic
+    # fallback provider is selected (see app.services.explanation).
+    featherless_api_key: str | None = Field(default=None, validation_alias="FEATHERLESS_API_KEY")
+    featherless_base_url: str = Field(
+        default="https://api.featherless.ai/v1", validation_alias="FEATHERLESS_BASE_URL"
+    )
+    featherless_model: str = Field(
+        default="deepseek-ai/DeepSeek-V4-Flash-0731", validation_alias="FEATHERLESS_MODEL"
+    )
+    featherless_timeout_seconds: float = Field(default=30.0, validation_alias="FEATHERLESS_TIMEOUT_SECONDS")
 
 
 @lru_cache

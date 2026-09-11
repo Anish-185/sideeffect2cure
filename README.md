@@ -18,9 +18,11 @@ sideeffect2cure/
 │   │   ├── api/             FastAPI routers
 │   │   ├── core/            config, disclaimers
 │   │   ├── models/          schemas (disease L2, drug L3, candidate L4,
-│   │   │                    feature L5, prediction P6, fusion P7, ranking P8)
+│   │   │                    feature L5, prediction P6, fusion P7, ranking P8,
+│   │   │                    explanation P9)
 │   │   ├── services/        business logic; disease/ (L2) drug/ (L3)
-│   │   │                    candidates/ (L4) features/ (L5) ml/ (P6) fusion/ (P7) ranking/ (P8)
+│   │   │                    candidates/ (L4) features/ (L5) ml/ (P6) fusion/ (P7)
+│   │   │                    ranking/ (P8) explanation/ (P9)
 │   │   ├── data/            biomedical data foundation (Level 1): sources,
 │   │   │                    schemas, identifier normalization, ingestion
 │   │   ├── features/        feature engineering
@@ -32,7 +34,8 @@ sideeffect2cure/
 ├── frontend/                React + TypeScript dashboard (not yet scaffolded)
 ├── data/                    raw / processed / features (git-ignored contents)
 ├── notebooks/
-├── scripts/                ingest_data.py, validate_data.py (L1), train_model.py (P6)
+├── scripts/                ingest_data.py, validate_data.py (L1), train_model.py (P6),
+│                           explain_candidates.py (P9)
 ├── docs/architecture.md            canonical pipeline + level status
 ├── docs/data.md                    Level 1 data foundation (sources, schemas, licensing)
 ├── docs/disease-intelligence.md    Level 2 resolver + disease profile
@@ -42,6 +45,7 @@ sideeffect2cure/
 ├── docs/ml-prediction.md           Phase 6 ML prediction + interpretability
 ├── docs/evidence-fusion.md         Phase 7 evidence fusion + repurposing score
 ├── docs/candidate-ranking.md       Phase 8 candidate ranking
+├── docs/ai-explanation.md          Phase 9 grounded AI-powered candidate explanation
 └── README.md
 ```
 
@@ -188,6 +192,32 @@ Ranking is based on the computational `repurposing_score` — it does not
 establish clinical efficacy, treatment suitability, or safety. Details:
 **`docs/candidate-ranking.md`**.
 
+## Grounded AI explanation (Phase 9)
+
+For an explicitly chosen candidate (or top-N), asks **DeepSeek V4 Flash**
+(via Featherless's OpenAI-compatible API) to narrate *why* it was
+computationally prioritized — using only the structured Phase 7/8 evidence it
+is handed. Every structural field (score, rank, evidence values/contributions,
+supporting ids) stays deterministic; the model supplies prose only, and only
+after it passes grounding validation (identity/score match, no fabricated
+identifiers, no clinical-claim language). Any failure — no API key, network
+error, timeout, malformed or rejected response — falls back automatically to
+a deterministic, template-based explanation.
+
+```bash
+export FEATHERLESS_API_KEY=...        # optional — omit to always use the deterministic fallback
+python scripts/explain_candidates.py "Glioblastoma" --top-n 3
+```
+```python
+from app.services.explanation import explain_for_disease
+ranked, explanations = explain_for_disease("Glioblastoma", top_n=3)
+explanations[0].summary, explanations[0].biological_evidence, explanations[0].provenance.provider
+```
+
+An explanation **summarizes computational evidence already produced by the
+pipeline** — it does not establish clinical efficacy, safety, treatment
+suitability, or cure. Details: **`docs/ai-explanation.md`**.
+
 ## Status
 
 - **Level 0** — repository foundation.
@@ -198,10 +228,12 @@ establish clinical efficacy, treatment suitability, or safety. Details:
 - **Level 5** — feature engineering.
 - **Phase 6** — ML prediction + interpretability.
 - **Phase 7** — evidence fusion + repurposing score.
-- **Phase 8** — candidate ranking (this milestone).
+- **Phase 8** — candidate ranking.
+- **Phase 9** — grounded AI-powered candidate explanation (this milestone).
 
 See `docs/architecture.md` for the full pipeline and per-level status.
 
 ## Tech stack
 
 Python · FastAPI · pandas / numpy / scikit-learn · NetworkX · React + TypeScript
+· DeepSeek V4 Flash (via Featherless) for Phase 9 candidate explanations
