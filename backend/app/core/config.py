@@ -58,6 +58,12 @@ class Settings(BaseSettings):
         default="deepseek-ai/DeepSeek-V4-Flash-0731", validation_alias="FEATHERLESS_MODEL"
     )
     featherless_timeout_seconds: float = Field(default=30.0, validation_alias="FEATHERLESS_TIMEOUT_SECONDS")
+    # DeepSeek V4 Flash is a reasoning model: its `reasoning` tokens are drawn
+    # from the same budget as `content` before any JSON is emitted, so this
+    # must be generous enough to cover reasoning + the full JSON payload, or
+    # the response is truncated to an empty content string (finish_reason
+    # "length") and the caller falls back to the deterministic provider.
+    featherless_max_tokens: int = Field(default=2500, validation_alias="FEATHERLESS_MAX_TOKENS")
 
 
 @lru_cache

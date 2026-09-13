@@ -42,12 +42,14 @@ class DeepSeekFeatherlessProvider:
         base_url: str | None = None,
         model: str | None = None,
         timeout: float | None = None,
+        max_tokens: int | None = None,
     ) -> None:
         settings = get_settings()
         self.api_key = api_key if api_key is not None else settings.featherless_api_key
         self.base_url = (base_url or settings.featherless_base_url).rstrip("/")
         self.model = model or settings.featherless_model
         self.timeout = timeout if timeout is not None else settings.featherless_timeout_seconds
+        self.max_tokens = max_tokens if max_tokens is not None else settings.featherless_max_tokens
 
     def explain(
         self, candidate: RankedCandidate, context: ExplanationContext
@@ -65,7 +67,7 @@ class DeepSeekFeatherlessProvider:
                 {"role": "user", "content": build_user_payload(context)},
             ],
             "temperature": 0.2,
-            "max_tokens": 700,
+            "max_tokens": self.max_tokens,
             "response_format": {"type": "json_object"},
         }
 
